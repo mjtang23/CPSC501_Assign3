@@ -63,11 +63,8 @@ public class Sender {
 			String line = br.readLine();
 			byte[] buffer = new byte[512];
 		    int count = -1;
-	
-		    
-		    
-			while ((count = din.read(buffer, 0, buffer.length)) > 0 ) {
-				
+
+			while ((count = din.read(buffer)) > 0 ) {
 				dos.write(buffer, 0, count);
 				
 			}

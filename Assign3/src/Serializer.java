@@ -65,10 +65,7 @@ public class Serializer {
                			   objRef = new Element(name);
                			   objRef.setAttribute("type", fRef.getGenericType().getTypeName());
                 	       objRef.setText(value.toString());
-                           fieldName.addContent(objRef);
-                         
-//                			
-//                			
+                           fieldName.addContent(objRef);               			
                 		}
                 	}else{
                 		value = f.get(obj);
@@ -84,15 +81,6 @@ public class Serializer {
         	objectName.addContent(fieldName);
         }
         
-//        Element name2 = new Element("name2");
-//        name.setText("Writing XML with JDom");
-//        name2.setText("Writing XML with JDom");
-//        Element test2 = new Element("TEST");
-        
-        
-//        test.addContent(name);
-//        test2.addContent(name2);
-//        root.addContent(test);
         root.addContent(objectName);
     
 		return doc;

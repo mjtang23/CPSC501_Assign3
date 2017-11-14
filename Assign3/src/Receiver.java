@@ -30,19 +30,22 @@ public class Receiver {
 			DataInputStream din = new DataInputStream(s.getInputStream());
 			FileOutputStream fout = new FileOutputStream("recieved.xml");
             byte[] buffer = new byte[512];
-			
-			while (din.read(buffer, 0 , buffer.length) > -1) {
-				fout.write(buffer, 0, buffer.length);
+            int count = -1;
+			while ((count = din.read(buffer)) > 0) {
+				fout.write(buffer, 0, count);
 				
 			}
 			
 			fout.close();
 			ss.close();
 			
-//			File inputFile = new File("recieved.xml");
-//			SAXBuilder saxBuilder = new SAXBuilder();
-//			Document doc = saxBuilder.build(inputFile);
-//			deserialized(doc);
+			File file = new File("recieved.xml");
+			SAXBuilder saxBuilder = new SAXBuilder();
+			Document doc = saxBuilder.build(file);
+			Deserializer deserial = new Deserializer();
+			Object obj = deserial.deserialize(doc);
+			ObjectInspector insp = new ObjectInspector();
+			insp.inspect(obj, true);
 			
 		}catch(Exception e){
 			System.out.println(e);
