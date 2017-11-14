@@ -24,20 +24,17 @@ public class Receiver {
 	
 	public static void receiveFile(){
 		try{
-			ServerSocket ss = new ServerSocket(8080);
+			ServerSocket ss = new ServerSocket(8000);
 			Socket s = ss.accept();
 			int bufferSize = s.getReceiveBufferSize();
-			System.out.println(bufferSize);
 			DataInputStream din = new DataInputStream(s.getInputStream());
 			FileOutputStream fout = new FileOutputStream("recieved.xml");
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[512];
 			
-
-	        int count= -1;
-
-	            while ((count = din.read(buffer)) != -1) {
-	                fout.write(buffer, 0, count);
-	            }
+			while (din.read(buffer, 0 , buffer.length) > -1) {
+				fout.write(buffer, 0, buffer.length);
+				
+			}
 			
 			fout.close();
 			ss.close();

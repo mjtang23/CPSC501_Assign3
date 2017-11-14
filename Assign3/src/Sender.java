@@ -7,7 +7,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -16,22 +21,27 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 public class Sender {
+	
 	public static void main(String [] args){
-		A a = new A();
-		Class cl = a.getClass();
-		Document doc = new Document();
-		Object obj;
-		try {
-			obj = cl.newInstance();
-			doc = serialized(obj);
-			XMLOutputter serialize = new XMLOutputter(Format.getPrettyFormat());
+		ObjectCreator choice = new ObjectCreator();
+		choice.menu();
+		Object obj = new Object();
+		Vector<Object> objs = choice.getObjs();
+		Serializer serial = new Serializer ();
+		Document doc = null;
+		Enumeration en = objs.elements();
+		try{
+			while(en.hasMoreElements()){
+				obj = en.nextElement();
+				doc = serial.serialized(obj);
+			}
+		
+			XMLOutputter serialized = new XMLOutputter(Format.getPrettyFormat());
 		    FileOutputStream out = new FileOutputStream("output.xml");  
-			serialize.output(doc, out);
+			serialized.output(doc, out);
 			System.out.println("File Saved!");
-			sendFile("localhost", 8080, "output.xml");
+			sendFile("localhost", 8000, "output.xml");
 			
-		} catch (InstantiationException | IllegalAccessException e) {			
-			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {			
@@ -41,47 +51,28 @@ public class Sender {
 		
 	}
 
-	public static Document serialized(Object obj){
-		
-		Element root = new Element("Serialized");
-		Document doc = new Document(root);
-		
-		
-		String classObj = obj.getClass().getName();
-		Element test = new Element(classObj);
-        test.setAttribute(new Attribute("id", "1"));
-        Element name = new Element("name");
-        Element name2 = new Element("name2");
-        name.setText("Writing XML with JDom");
-        name2.setText("Writing XML with JDom");
-        Element test2 = new Element("TEST");
-        
-        
-        test.addContent(name);
-        test2.addContent(name2);
-        root.addContent(test);
-        root.addContent(test2);
-    
-		return doc;
-	}
 	
 	
 	public static void sendFile(String host, int port, String file) {
 		try {
 			Socket s = new Socket(host, port);
-			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+			int bufferSize = s.getReceiveBufferSize();
 			FileInputStream din = new FileInputStream(file);
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String line = br.readLine();
-			byte[] buffer;
+			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+			//BufferedReader br = new BufferedReader(new FileReader(file));
 			
-			while ((line) != null) {
-				buffer = line.getBytes();
-				din.read(buffer);
-				dos.write(buffer);
-				line = br.readLine();
+			byte[] buffer = new byte[512];
+		    int count = -1;
+	
+		    
+		    
+			while ((count = din.read(buffer)) > 0 ) {
+				dos.write(buffer, 0, count);
+				
 			}
-
+			
+		
+			
 			din.close();
 			dos.close();
 			
