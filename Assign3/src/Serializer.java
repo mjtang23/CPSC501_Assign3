@@ -1,4 +1,5 @@
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.IdentityHashMap;
 
 import org.jdom2.Attribute;
@@ -29,18 +30,54 @@ public class Serializer {
         fields = classObj.getDeclaredFields();
         for(int x = 0; x < fields.length; x++){
         	f = fields[x];
-        	f.setAccessible(true);
-        	name = f.getName();
-        	Element fieldName = new Element(name);
-        	fieldName.setAttribute("type", f.getGenericType().getTypeName());
-        	try {
+        	Type t = f.getType();
+        		
         		f.setAccessible(true);
-        		value = f.get(obj);
-				fieldName.setText(value.toString());
-			} catch (IllegalArgumentException | IllegalAccessException e) {
+        		name = f.getName();
+        		Element fieldName = new Element(name);
+        		fieldName.setAttribute("type", f.getGenericType().getTypeName());
+        	    
+//       			
+        		try {
+        			f.setAccessible(true);
+        			Object ref = f.get(obj);
+        			Boolean check = f.getType().isPrimitive();
+        			System.out.println(ref.getClass());
+        			System.out.println(check);
+        			if(!check ){
+        				name = Integer.toString(index);
+                        fieldName.setAttribute("id", name);
+                        ihm.put(index, fieldName);
+                        index++;
+        			    ref = f.get(obj);
+                		String refObj;
+                		Element objRef;
+                		Field [] refField = ref.getClass().getDeclaredFields();
+                		
+                		for(int y=0; y < refField.length; y++ ){
+                		   Field fRef = refField[y];
+                		   fRef.setAccessible(true);
+                		   name = fRef.getName();
+                		   System.out.println(name);
+               			   value = fRef.get(ref);
+               			   
+               			   
+               			   objRef = new Element(name);
+               			   objRef.setAttribute("type", fRef.getGenericType().getTypeName());
+                	       objRef.setText(value.toString());
+                           fieldName.addContent(objRef);
+                         
+//                			
+//                			
+                		}
+                	}else{
+                		value = f.get(obj);
+                		fieldName.setText(value.toString());
+                	}
+        		} catch (IllegalArgumentException | IllegalAccessException e) {
 				
-				e.printStackTrace();
-			}
+        			e.printStackTrace();
+        		}
         	
         	
 			

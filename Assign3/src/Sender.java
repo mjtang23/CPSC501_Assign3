@@ -59,14 +59,15 @@ public class Sender {
 			int bufferSize = s.getReceiveBufferSize();
 			FileInputStream din = new FileInputStream(file);
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-			//BufferedReader br = new BufferedReader(new FileReader(file));
-			
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line = br.readLine();
 			byte[] buffer = new byte[512];
 		    int count = -1;
 	
 		    
 		    
-			while ((count = din.read(buffer)) > 0 ) {
+			while ((count = din.read(buffer, 0, buffer.length)) > 0 ) {
+				
 				dos.write(buffer, 0, count);
 				
 			}
