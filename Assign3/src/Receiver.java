@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
@@ -7,13 +8,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
-import org.jdom2.Document;
-import org.jdom2.Element;
+import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.XMLOutputter;
+
 
 public class Receiver {
 	
@@ -39,13 +41,21 @@ public class Receiver {
 			fout.close();
 			ss.close();
 			
-			File file = new File("recieved.xml");
+			
 			SAXBuilder saxBuilder = new SAXBuilder();
-			Document doc = saxBuilder.build(file);
+			Document doc = saxBuilder.build("recieved.xml");
 			Deserializer deserial = new Deserializer();
-			Object obj = deserial.deserialize(doc);
+			Element root = doc.getRootElement();
+			List<Element>children = root.getChildren();
 			ObjectInspector insp = new ObjectInspector();
-			insp.inspect(obj, true);
+			Object obj;
+			
+			for(int i=0; i < children.size(); i++){
+				obj = deserial.deserialize(doc);
+				insp.inspect(obj, true);
+			}
+			
+			
 			
 		}catch(Exception e){
 			System.out.println(e);
@@ -54,16 +64,7 @@ public class Receiver {
 		
 	}
 	
-//	public static Object deserialized(Document doc){
-//		
-//		Element root = doc.getRootElement();
-//		String name = root.getName();
-//		Object obj = new Object();
-//		Class classObj = 
-//		obj.set
-//		
-//
-//	}
+
 	
 	
 }

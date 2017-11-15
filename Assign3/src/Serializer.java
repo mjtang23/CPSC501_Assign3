@@ -8,7 +8,7 @@ import org.jdom2.Element;
 
 public class Serializer {
 		
-		Element root = new Element("Serialized");
+		Element root = new Element("serialized");
 		Document doc = new Document(root);
 		IdentityHashMap ihm = new IdentityHashMap();
 		int index = 0;
@@ -33,17 +33,16 @@ public class Serializer {
         	Type t = f.getType();
         		
         		f.setAccessible(true);
-        		name = f.getName();
-        		Element fieldName = new Element(name);
-        		fieldName.setAttribute("type", f.getGenericType().getTypeName());
+        		//name = f.getName();
+        		Element fieldName = new Element("Field");
+        		name = classObj.getName();
+        		
         	    
 //       			
         		try {
         			f.setAccessible(true);
         			Object ref = f.get(obj);
         			Boolean check = f.getType().isPrimitive();
-        			System.out.println(ref.getClass());
-        			System.out.println(check);
         			if(!check ){
         				name = Integer.toString(index);
                         fieldName.setAttribute("id", name);
@@ -58,18 +57,25 @@ public class Serializer {
                 		   Field fRef = refField[y];
                 		   fRef.setAccessible(true);
                 		   name = fRef.getName();
-                		   System.out.println(name);
+       
                			   value = fRef.get(ref);
                			   
                			   
-               			   objRef = new Element(name);
-               			   objRef.setAttribute("type", fRef.getGenericType().getTypeName());
+               			   objRef = new Element("Value");
+               			   
+               			   objRef.setAttribute("name", fRef.getGenericType().getTypeName());
                 	       objRef.setText(value.toString());
-                           fieldName.addContent(objRef);               			
+                           fieldName.addContent(objRef);   
+                           
                 		}
                 	}else{
+                		fieldName.setAttribute("name", f.getName());
+                		fieldName.setAttribute("declaringclass", name);
+                		Element prim = new Element("value");
                 		value = f.get(obj);
-                		fieldName.setText(value.toString());
+                		prim.setText(value.toString());
+                		fieldName.addContent(prim); 
+                		
                 	}
         		} catch (IllegalArgumentException | IllegalAccessException e) {
 				

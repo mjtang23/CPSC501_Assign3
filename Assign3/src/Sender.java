@@ -21,7 +21,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 public class Sender {
-	
+	static int count = -1;
 	public static void main(String [] args){
 		ObjectCreator choice = new ObjectCreator();
 		choice.menu();
@@ -51,18 +51,19 @@ public class Sender {
 		
 	}
 
-	
+	public int getCount(){
+		return count;
+	}
 	
 	public static void sendFile(String host, int port, String file) {
 		try {
 			Socket s = new Socket(host, port);
-			int bufferSize = s.getReceiveBufferSize();
 			FileInputStream din = new FileInputStream(file);
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line = br.readLine();
 			byte[] buffer = new byte[512];
-		    int count = -1;
+		    
 
 			while ((count = din.read(buffer)) > 0 ) {
 				dos.write(buffer, 0, count);
